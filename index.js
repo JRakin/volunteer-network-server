@@ -28,7 +28,7 @@ client.connect((err) => {
     .collection('registeredlist');
 
   app.post('/addEvent', (req, res) => {
-    eventCollection.insertMany(req.body).then((result) => {
+    eventCollection.insertOne(req.body).then((result) => {
       res.send(result.insertedCount.toString());
     });
   });
@@ -68,6 +68,18 @@ client.connect((err) => {
     registeredListCollection.deleteOne({ id: id.toString() }).then((result) => {
       res.send(result.deletedCount > 0);
     });
+  });
+  app.get('/allRegisteredList', (req, res) => {
+    registeredListCollection.find({}).toArray((err, documents) => {
+      res.send(documents);
+    });
+  });
+  app.delete('/deleteByAdmin/:id', (req, res) => {
+    registeredListCollection
+      .deleteOne({ _id: ObjectId(req.params.id) })
+      .then((result) => {
+        res.send(result.deletedCount > 0);
+      });
   });
   console.log('connected');
 });
